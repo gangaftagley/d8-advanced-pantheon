@@ -1,0 +1,67 @@
+#!/bin/bash
+# Accepts parameters, use 'theme-compile theme1 theme2' for spcific themes.
+# Use w/ no parameters to compile all themes.
+
+SRC_PATH="${PROJECT_ROOT}/src"
+THEMES_PATH="${SRC_PATH}/themes"
+
+cd $THEMES_PATH
+
+usage() { echo "Usage: $0 [-p] optionaltheme1 optionaltheme2" 1>&2; exit 1; }
+
+while getopts ":p" opt; do
+  case ${opt} in
+    p ) # process option e
+		p=prod
+      ;;
+    * ) 
+		usage
+      ;;
+  esac
+done
+
+shift $((OPTIND -1))
+
+compile_command() {
+	if [ "${p}" == "prod" ]; then
+		fin exec bundle exec compass compile -e production
+	else
+		fin exec bundle exec compass compile
+	fi
+}
+
+# Required parameter: $path.
+compile_theme() {
+	if [ ! -d $path ]; then
+		echo "Directory $path does not exist, exiting"
+		exit 1
+	fi
+	cd $path
+	if [ -f ".bundler/bin/compass" ]; then
+		echo "compiling $path"
+		fin exec bundle exec compass clean
+		compile_command
+	else
+		fin exec bundle install
+		echo "compiling $path"
+		fin exec bundle exec compass clean
+		compile_command
+	fi
+	cd ..
+}
+
+# Check for parameters.
+if [ $# -eq 0 ]; then
+	#If no params compile all themes.
+	for path in $(find . -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+	do
+		compile_theme $path
+	done
+
+else
+	#If params, compile only those themes.
+	for path in $@
+	do
+		compile_theme $path
+	done
+fi

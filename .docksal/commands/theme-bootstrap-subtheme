@@ -1,0 +1,100 @@
+#!/bin/bash
+
+#-------------------------- Settings --------------------------------
+
+# PROJECT_ROOT is passed from fin.
+# The following variables are configured in the '.env' file: DOCROOT, VIRTUAL_HOST.
+
+SITE_DIRECTORY="default"
+DOCROOT_PATH="${PROJECT_ROOT}/${DOCROOT}"
+SRC_PATH="${PROJECT_ROOT}/src"
+SITEDIR_PATH="${DOCROOT_PATH}/sites/${SITE_DIRECTORY}"
+VENDOR_PATH="${PROJECT_ROOT}/vendor"
+CONFIG_PATH="${PROJECT_ROOT}/config"
+
+#-------------------------- END: Settings --------------------------------
+
+#-------------------------- Helper functions --------------------------------
+
+# Console colors
+red='\033[0;31m'
+green='\033[0;32m'
+green_bg='\033[42m'
+yellow='\033[1;33m'
+NC='\033[0m'
+
+echo-red () { echo -e "${red}$1${NC}"; }
+echo-green () { echo -e "${green}$1${NC}"; }
+echo-green-bg () { echo -e "${green_bg}$1${NC}"; }
+echo-yellow () { echo -e "${yellow}$1${NC}"; }
+
+#-------------------------- END: Helper functions --------------------------------
+
+echo
+echo -n "sub theme machine name (enter to skip)? "
+read name
+
+THEME_PATH="${SRC_PATH}/themes/${name}"
+
+if [ -d "$THEME_PATH" ]; then
+	echo "theme already exists, quitting"
+	exit 1
+fi
+
+echo -n "sub theme human readable title? "
+read title
+
+# Copy the drupal bootstrap theme starterkit to a subtheme, rename/edit some files.
+cp -R $DOCROOT_PATH/themes/contrib/bootstrap/starterkits/sass $THEME_PATH
+cd $THEME_PATH
+
+echo
+echo "copied sass starterkit from drupal bootstrap to new subtheme $name in $THEME_PATH"
+
+mv THEMENAME.starterkit.yml $name.info.yml
+echo "renamed THEMENAME.starterkit.yml to $name.info.yml"
+mv THEMENAME.libraries.yml $name.libraries.yml
+echo "renamed THEMENAME.libraries.yml to $name.libraries.yml"
+mv THEMENAME.theme $name.theme
+echo "renamed THEMENAME.theme to $name.theme"
+mv config/install/THEMENAME.settings.yml config/install/$name.settings.yml
+echo "renamed config/install/THEMENAME.settings.yml to config/install/$name.settings.yml"
+mv config/schema/THEMENAME.schema.yml config/schema/$name.schema.yml
+echo "renamed config/schema/THEMENAME.schema.yml to config/schema/$name.schema.yml"
+sed -i '.bak' "s/THEMENAME/$name/g;s/THEMETITLE/$title/g" $name.info.yml
+echo "edited $name.info.yml to replace THEMENAME and THEMETITLE with $name and $title, saved original to $name.info.yml.bak"
+sed -i '.bak' "s/THEMENAME/$name/g;s/THEMETITLE/$title/g" config/schema/$name.schema.yml
+echo "edited config/schema/$name.schema.yml to replace THEMENAME and THEMETITLE with $name and $title, saved original to config/schema/$name.schema.yml.bak"
+echo
+
+# Copy the bootstrap library to the theme.
+if [ -d "$VENDOR_PATH/twbs/bootstrap-sass" ]; then
+	cp -R $VENDOR_PATH/twbs/bootstrap-sass bootstrap
+	echo "Bootstrap library exists and was copied to your theme."
+else
+	echo "Bootstrap library does not exist, make sure it's in composer.json"
+fi
+
+# Create directories needed in the theme
+mkdir css fonts scripts
+
+# Create a basic config.rb file
+cp $CONFIG_PATH/config.rb.default config.rb
+echo "Created config.rb file."
+
+# Create a basic gemfile
+cp $CONFIG_PATH/gemfile.default gemfile
+echo "Created gemfile."
+
+fin exec bundle install
+fin exec bundle exec compass clean
+fin exec bundle exec compass compile
+
+# Enable the new theme.
+cd "${DOCROOT_PATH}"
+fin drush theme-enable -y $name
+fin drush config-set -y system.theme default $name
+fin drush cr
+
+echo
+echo-green "Use command 'fin patternlab-install' to install patternlab"

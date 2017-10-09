@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+## Composer Install and create the proper symlinked directory structures
+##
+## Usage: fin init-drupal
+
+# Abort if anything fails
+set -e
+
+#-------------------------- Settings --------------------------------
+
+# Console colors
+red='\033[0;31m'
+green='\033[0;32m'
+green_bg='\033[42m'
+yellow='\033[1;33m'
+NC='\033[0m'
+
+echo-red () { echo -e "${red}$1${NC}"; }
+echo-green () { echo -e "${green}$1${NC}"; }
+echo-green-bg () { echo -e "${green_bg}$1${NC}"; }
+echo-yellow () { echo -e "${yellow}$1${NC}"; }
+
+
+# PROJECT_ROOT is passed from fin.
+# The following variables are configured in the '.env' file: DOCROOT, VIRTUAL_HOST.# PROJECT_ROOT and DOCROOT are set as env variables in cli
+SITE_DIRECTORY="default"
+DOCROOT_PATH="${PROJECT_ROOT}/${DOCROOT}"
+SRC_PATH="${PROJECT_ROOT}/src"
+SITEDIR_PATH="${DOCROOT_PATH}/sites/${SITE_DIRECTORY}"
+
+#-------------------------- END: Settings --------------------------------
+
+#-------------------------- Helper functions --------------------------------
+
+## Link a settings file.
+# Skips if the destination file already exists.
+# @param $1 source file
+# @param $2 destination directory
+link_settings_file()
+{
+  local source="$1"
+  local dest="$2"
+  local relpath="$(python -c "import os.path; print os.path.relpath('$source', '$dest')")"
+  local filename=$(basename $source)
+
+  if [[ ! -e $dest/$filename ]]; then
+    echo "Copying ${dest}..."
+    relpath="$(python -c "import os.path; print os.path.relpath('$source', '$dest')")"
+    ln -s $relpath $dest/$filename
+  else
+    echo-yellow "${dest}/${filename} already in place."
+  fi
+}
+
+link_source_directories()
+{
+  local source="$1"
+  local dest="$2"
+  local link_name="$3"
+
+  if [[ ! -d $dest/$link_name ]]; then
+    echo "Linking ${dest}..."
+
+    relpath="$(python -c "import os.path; print os.path.relpath('$source', '$dest')")"
+    ln -s $relpath $dest/$link_name
+  else
+    echo-yellow "${dest}/${link_name} already in place."
+  fi
+}
+#-------------------------- END: Helper functions --------------------------------
+
+# Initialize local settings files
+init_settings ()
+{
+  # link from config - all of docroot gets ignored in VCS
+  link_settings_file "${PROJECT_ROOT}/config/settings.php" "${SITEDIR_PATH}"
+  cp "${PROJECT_ROOT}/config/settings.local.example.php" "${PROJECT_ROOT}/config/settings.local.php"
+  link_settings_file "${PROJECT_ROOT}/config/settings.local.php" "${SITEDIR_PATH}"
+  #symlink custom directories
+  link_source_directories "${SRC_PATH}/modules" "${DOCROOT_PATH}/modules" "custom"
+  link_source_directories "${SRC_PATH}/themes" "${DOCROOT_PATH}/themes" "custom"
+}
+
+
+#It would be best to use the VM to do all the work - but memory and composer can be an issue
+fin exec composer install
+# composer install
+if [[ ! -f ${DOCROOT_PATH}/index.php ]]; then
+  echo-yellow "Downloading Drupal Scaffolding"
+  fin exec composer drupal-scaffold
+fi
+init_settings

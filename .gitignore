@@ -1,7 +1,39 @@
-# Ignore binaries.
-/bin
+# Files produced by bad patch & diff runs
+*~*~
+*.rej
+*.diff
+*.orig
+interdiff*.txt
+*.log
+*.sql
+*.lock
 
-.idea/
-docker-compose.yml
-docroot/sites/*/settings.local.php
-docroot/sites/*/files
+# Local caches.
+.sass-cache
+
+# IDE artifacts
+*~
+\#*\#
+*.swp
+*.swo
+.DS*
+.project
+.idea
+
+# Upstream dependencies.
+vendor
+src/themes/*/.bundle
+src/themes/*/.bundler
+src/themes/*/.sass-cache
+
+# Application specific.
+config/settings.local.php
+test/behat.yml
+
+# Build artifacts
+/docroot
+/package
+
+# Site Content
+/src/sites/*/files
+private_files

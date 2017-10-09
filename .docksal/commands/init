@@ -55,10 +55,20 @@ sleep 10
 
 # Site initialization
 echo -e "${green_bg} Step 2 ${NC}${green} Initializing site...${NC}"
+fin init-drupal
 # This runs inside cli using http://docs.docksal.io/en/v1.4.0/fin/custom-commands/#executing-commands-inside-cli
 fin init-site
 
+echo -e "${green_bg} Step 3 ${NC}${green} Creating Subtheme...${NC}"
+#fin theme-bootstrap-subtheme
+
 echo -en "${green_bg} DONE! ${NC} "
 echo -e "Open ${yellow}http://${VIRTUAL_HOST}${NC} in your browser to verify the setup."
+
+cd "${DOCROOT_PATH}"
+echo
+echo "Here is a one-time login link"
+#fin drush --uri=$VIRTUAL_HOST uli
+echo
 
 #-------------------------- END: Execution --------------------------------

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Include global project config.
+source ${PROJECT_ROOT}/.docksal/_config
+
+# Abort on errors.
+set -e
+
+# Make sure there is a build directory.
+if [ ! -d "$PKG_PATH" ]; then
+  mkdir "$PKG_PATH";
+fi
+
+echo " >> Installing composer dependencies to $PKG_PATH."
+cp $PROJECT_ROOT/composer.json $PKG_PATH
+cd $PKG_PATH
+composer install --no-dev
+echo $''
+
+echo " >> Copying custom modules."
+rsync -ah --exclude=".gitkeep" $SRC_PATH/modules/* $PKG_PATH/docroot/modules/custom
+
+echo " >> Copying custom themes."
+rsync -ah --exclude=".gitkeep" $SRC_PATH/themes/* $PKG_PATH/docroot/themes/custom
+
+# @TODO: copy profiles
+# @TODO: rebuild theme assets
+
+echo " >> Cleaning up."
+rm -f $PKG_PATH/docroot/sites/development.services.yml
+rm -f $PKG_PATH/docroot/sites/example.*
+rm -f $PKG_PATH/docroot/sites/default/default.*
+
+echo "## Build complete."

@@ -1,0 +1,27 @@
+#!/bin/bash
+# Accepts parameters, use 'patternlab-watch theme' for spcific theme.
+# Use w/ no parameters to compile first/only theme in themes dir.
+
+SRC_PATH="${PROJECT_ROOT}/src"
+THEMES_PATH="${SRC_PATH}/themes"
+
+cd $THEMES_PATH
+
+# Check for parameters.
+if [ $# -eq 0 ]; then
+    #If no params compile first theme.
+    cd */patternlab
+    echo -n "watching "
+    PWD
+    fin exec php core/console --watch
+else
+    #If param, compile only that theme.
+    if [ ! -d $1 ]; then
+        echo "Directory $1 does not exist, exiting"
+        exit 1
+    fi
+    cd $1/patternlab
+    echo -n "watching "
+    PWD
+    fin exec php core/console --watch
+fi

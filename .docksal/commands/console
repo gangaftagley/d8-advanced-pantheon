@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+fin exec /var/www/vendor/bin/drupal --root=/var/www/docroot "$@"
