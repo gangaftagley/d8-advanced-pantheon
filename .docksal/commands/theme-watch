@@ -1,6 +1,11 @@
 #!/bin/bash
-# Accepts parameters, use 'theme-watch theme' for spcific theme.
-# Use w/ no parameters to compile first/only theme in themes dir.
+
+## Watches custom themes for changes and recompiles
+##
+## Usage: fin theme-watch [themename]
+##
+## Accepts parameters, use 'theme-watch theme' for spcific theme.
+## Use w/ no parameters to compile first/only theme in themes dir.
 
 SRC_PATH="${PROJECT_ROOT}/src"
 THEMES_PATH="${SRC_PATH}/themes"

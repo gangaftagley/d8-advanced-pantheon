@@ -1,6 +1,11 @@
 #!/bin/bash
-# Accepts parameters, use 'theme-compile theme1 theme2' for spcific themes.
-# Use w/ no parameters to compile all themes.
+
+## Compiles css in custom themes [-p] production (no map file and css compressed)
+##
+## Usage: fin theme-compile [-p]
+##
+## Accepts parameters, use 'theme-compile theme1 theme2' for spcific themes.
+## Use w/ no parameters to compile all themes.
 
 SRC_PATH="${PROJECT_ROOT}/src"
 THEMES_PATH="${SRC_PATH}/themes"
@@ -14,7 +19,7 @@ while getopts ":p" opt; do
     p ) # process option e
 		p=prod
       ;;
-    * ) 
+    * )
 		usage
       ;;
   esac

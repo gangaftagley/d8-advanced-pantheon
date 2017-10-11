@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-# Include global project config.
-source ${PROJECT_ROOT}/.docksal/_config
+## Builds a complete cpoy of site ready for deployment
+##
+## Usage: fin package
+##
+## PKG_PATH defined in .docksal/docksal.env defaults to PROJECT_ROOT/package
 
 # Abort on errors.
 set -e
