@@ -42,6 +42,6 @@ site_install ()
 
 # Project initialization steps
 fix_permissions
-# time site_install
+time site_install
 
 #-------------------------- END: Execution --------------------------------

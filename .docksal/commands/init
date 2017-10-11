@@ -60,7 +60,7 @@ fin init-drupal
 fin init-site
 
 echo -e "${green_bg} Step 3 ${NC}${green} Creating Subtheme...${NC}"
-#fin theme-bootstrap-subtheme
+fin theme-bootstrap-subtheme
 
 echo -en "${green_bg} DONE! ${NC} "
 echo -e "Open ${yellow}http://${VIRTUAL_HOST}${NC} in your browser to verify the setup."
@@ -68,7 +68,7 @@ echo -e "Open ${yellow}http://${VIRTUAL_HOST}${NC} in your browser to verify the
 cd "${DOCROOT_PATH}"
 echo
 echo "Here is a one-time login link"
-#fin drush --uri=$VIRTUAL_HOST uli
+fin drush --uri=$VIRTUAL_HOST uli
 echo
 
 #-------------------------- END: Execution --------------------------------
