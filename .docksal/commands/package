@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Builds a complete cpoy of site ready for deployment
+## Builds a complete copy of site ready for deployment
 ##
 ## Usage: fin package
 ##
@@ -20,11 +20,17 @@ cd $PKG_PATH
 composer install --no-dev
 echo $''
 
-echo " >> Copying custom modules."
-rsync -ah --exclude=".gitkeep" $SRC_PATH/modules/* $PKG_PATH/docroot/modules/custom
+# Copy custom modules if they exist.
+if ls $SRC_PATH/modules/* 1> /dev/null 2>&1; then
+  echo " >> Copying custom modules."
+  rsync -ah --exclude=".gitkeep" $SRC_PATH/modules/ $PKG_PATH/docroot/modules/custom
+fi
 
-echo " >> Copying custom themes."
-rsync -ah --exclude=".gitkeep" $SRC_PATH/themes/* $PKG_PATH/docroot/themes/custom
+# Copy custm themes if they exist.
+if ls $SRC_PATH/themes/* 1> /dev/null 2>&1; then
+  echo " >> Copying custom themes."
+  rsync -ah --exclude=".gitkeep" $SRC_PATH/themes/ $PKG_PATH/docroot/themes/custom
+fi
 
 # @TODO: copy profiles
 # @TODO: rebuild theme assets
@@ -34,4 +40,4 @@ rm -f $PKG_PATH/docroot/sites/development.services.yml
 rm -f $PKG_PATH/docroot/sites/example.*
 rm -f $PKG_PATH/docroot/sites/default/default.*
 
-echo "## Build complete."
+echo "## Packaging complete."
