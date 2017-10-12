@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Builds a complete cpoy of site ready for deployment
+## Builds a complete copy of site ready for deployment
 ##
 ## Usage: fin package
 ##
