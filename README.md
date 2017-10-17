@@ -1,46 +1,3 @@
-
-> A starting repository leveraging [Docksal](https://github.com/docksal) for a local dev environment.
-
-## Requirements
-
-* [Composer](https://getcomposer.org/download) (e.g. `brew install composer`)
-* [Docksal](http://docksal.io)
-
-## Installation
-### Local virtual machine
-Download docksal.
-
-    $ curl -fsSL get.docksal.io | sh
-Download and install docksal virtualbox VM. (this may take a while)
-
-    $ fin vm start
-
-### Repository setup
-Clone the Freeflow StarterKit repository.
-
-    $ git clone  git@github.com:FreeflowDigital/Drupal8-advanced [project name]
-    $ cd [project name]
-
-Install Drupal site with Docksal.
-
-    $ fin init
-
-### Drupal Console
-Initialize and test that the console is working:
-
-    $ fin console init
-    $ fin console cr
-
-`cr` is an alias for cache rebuild (cache clear in d7), i.e. `fin console cache:rebuild`.
-
-#### Usage
-Existing sites run:
-
-    $ fin console config:import
-    $ fin console update:entities
-
-See handy cheat-sheet for Drupal Console commands [here](https://drupalconsole.com/cheatsheet/).
-
 # Example Drops 8 Composer for Docksal
 
 [![CircleCI](https://circleci.com/gh/pantheon-systems/example-drops-8-composer.svg?style=shield)](https://circleci.com/gh/pantheon-systems/example-drops-8-composer)
@@ -67,6 +24,7 @@ Before running the `terminus build:project:create` command, make sure you have a
 * [The Terminus Build Tools Plugin](https://github.com/pantheon-systems/terminus-build-tools-plugin)
 * An account with GitHub and an authentication token capable of creating new repos.
 * An account with CircleCI and an authentication token.
+* [Docksal](http://docksal.io)
 
 You may find it easier to export the GitHub and CircleCI tokens as variables on your command line where the Build Tools Plugin can detect them automatically:
 
@@ -75,7 +33,7 @@ export GITHUB_TOKEN=[REDACTED]
 export CIRCLE_TOKEN=[REDACTED]
 ```
 
-### One command setup:
+### Setup repository:
 
 Once you have all of the prerequisites in place, you can create your copy of this repo with one command:
 
@@ -89,6 +47,17 @@ The parameters shown here are:
 * The machine name to be used by both the soon-to-be-created Pantheon site and GitHub repo. Change `my-new-site` to something meaningful for you.
 * The `--team` flag is optional and refers to a Pantheon organization. Pantheon organizations are often web development agencies or Universities. Setting this parameter causes the newly created site to go within the given organization. Run the Terminus command `terminus org:list` to see the organizations you are a member of. There might not be any.
 
+### Setup local server:
+Download docksal.
+
+    $ curl -fsSL get.docksal.io | sh
+Download and install docksal virtualbox VM. (this may take a while)
+
+    $ fin vm start
+
+Install Drupal site with Docksal.
+
+    $ fin init
 
 ## Important files and directories
 
