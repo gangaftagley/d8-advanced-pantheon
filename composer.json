@@ -39,7 +39,6 @@
     "webflo/drupal-core-strict": "^8",
     "drupal/bootstrap": "^3.5",
     "twbs/bootstrap-sass": "3.x.x",
-    "drupal/bootstrap": "^3.5",
     "drupal/dynamic_entity_reference": "^2.0-alpha6",
     "drupal/embed": "^1.0",
     "drupal/entity": "^1.0-beta",
